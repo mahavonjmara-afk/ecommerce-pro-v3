@@ -66,5 +66,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
 });
 
+use Illuminate\Support\Facades\Artisan;
+
+Route::get('/run-clear', function () {
+    Artisan::call('cache:clear');
+    Artisan::call('view:clear');
+    Artisan::call('config:clear');
+    return 'Cache cleared.';
+});
+
 // Inclure les routes d'authentification générées par Laravel (login, register, etc.)
 require __DIR__.'/auth.php';
