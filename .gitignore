@@ -1,0 +1,17 @@
+/node_modules
+/vendor
+.env
+.env.*
+!.env.example
+/storage
+/public/storage
+/public/hot
+/public/build
+.DS_Store
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+auth.json
+.idea
+.vscode
+*.log

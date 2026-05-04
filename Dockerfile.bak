@@ -1,0 +1,34 @@
+FROM php:8.3-fpm
+
+# Installer les dépendances système
+RUN apt-get update && apt-get install -y \
+    git curl libpng-dev libonig-dev libxml2-dev zip unzip \
+    libpq-dev nodejs npm
+
+# Installer les extensions PHP
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+
+# Installer Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Définir le répertoire de travail
+WORKDIR /var/www/html
+
+# Copier les fichiers de l'application
+COPY . .
+
+# Installer les dépendances PHP
+RUN composer install --no-dev --optimize-autoloader
+
+# Installer les dépendances Node et compiler les assets
+RUN npm install && npm run build
+
+# Configurer les permissions
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Exposer le port
+EXPOSE 8000
+
+# Commande de démarrage
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
